@@ -1,35 +1,4 @@
 {
-  "name": "sunnyboy-influxdb",
-<<<<<<< HEAD
-  "version": "0.0.1",
-  "description": "A node webservice that pulls data from the Sunny Boy webinterface and pushes it to InfluxDB.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
-  "author": "Martijn Dierckx",
-  "keywords": [
-    "SMA",
-    "sunnyboy",
-    "solar",
-    "influx",
-    "influxdb",
-    "grafana"
-  ],
-  "license": "ISC",
-  "dependencies": {
-    "death": "^1.*",
-    "influx": "^5.*",
-    "moment": "^2.*",
-    "request": "^2.*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:martijndierckx/sunnyboy-influxdb.git"
-  }
-}
-=======
   "version": "0.0.2",
   "description": "",
   "main": "dist/index.js",
@@ -59,4 +28,3 @@
     "build": "tsc"
   }
 }
->>>>>>> 23fc9a2 (influx2 + docker-compose + cleanup)
