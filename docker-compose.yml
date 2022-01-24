@@ -1,0 +1,23 @@
+version: '3'
+services:
+  energy-monitor:
+    build: .
+    environment:
+    - SMA_HOST=192.168.0.99
+    - SMA_INSTALLER_PASSWORD=
+    - INFLUX_URL=http://192.168.0.100:8086
+    - INFLUX_BUCKET=home
+    - INFLUX_ORG=home
+    - INFLUX_TOKEN=
+    - INFLUX_MEASUREMENT=solar
+    - INFLUX_INVERTERTAG=main
+    #- INFLUX_MAP_FILE=/sunnyboy/influx_map.json # If you want to overwrite it, you can provide your own by setting a location via a volume
+    - INTERVAL=1000
+    - WAIT_IF_NULL=60 # Wait 60 seconds if the last values were 0
+  #volumes:
+  #  - /home/home/sunnyboy/influx_map.json:/sunnyboy/influx_map.json
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "50m"

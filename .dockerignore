@@ -1,0 +1,9 @@
+node_modules
+.gitignore
+docker-compose.yml
+npm-debug.log
+.vscode
+.editorconfig
+.eslintignore
+.eslintrc.json
+.prettierrc

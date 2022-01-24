@@ -1,0 +1,45 @@
+{
+  "DC": {
+    "A": {
+      "watt": "DC_Watt_A",
+      "volt": "DC_Volt_A",
+      "amp": "DC_Amps_A"
+    },
+    "B": {
+      "watt": "DC_Watt_B",
+      "volt": "DC_Volt_B",
+      "amp": "DC_Amps_B"
+    }
+  },
+  "AC": {
+    "watt": "AC_Watt",
+    "frequency": "AC_net_Frequency",
+    "L1": {
+      "volt": "AC_Volt_L1",
+      "amp": "AC_Amps_L1"
+    },
+    "L2": {
+      "volt": "AC_Volt_L2",
+      "amp": "AC_Amps_L2"
+    },
+    "L3": {
+      "volt": "AC_Volt_L3",
+      "amp": "AC_Amps_L3"
+    },
+    "L1L2": {
+      "volt": "AC_Volt_L1L2"
+    },
+    "L2L3": {
+      "volt": "AC_Volt_L2L3"
+    },
+    "L3L1": {
+      "volt": "AC_Volt_L3L1"
+    }
+  },
+  "dayYield": {
+    "kwh": "day_yield"
+  },
+  "totalYield": {
+    "kwh": "total_yield"
+  }
+}
