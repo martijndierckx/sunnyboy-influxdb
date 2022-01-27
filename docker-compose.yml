@@ -2,6 +2,7 @@ version: '3'
 services:
   energy-monitor:
     build: .
+    restart: always
     environment:
     - SMA_HOST=192.168.0.99
     - SMA_INSTALLER_PASSWORD=
