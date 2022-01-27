@@ -13,6 +13,7 @@ import moment from 'moment';
   // Configure connection
   const smaConnOpts = {
     host: process.env.SMA_HOST,
+    forceHttp: process.env.SMA_FORCE_HTTP ? true : false,
     password: process.env.SMA_INSTALLER_PASSWORD
   };
 

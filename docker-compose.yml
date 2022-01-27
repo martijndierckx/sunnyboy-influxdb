@@ -6,6 +6,7 @@ services:
     environment:
     - SMA_HOST=192.168.0.99
     - SMA_INSTALLER_PASSWORD=
+    #- SMA_FORCE_HTTP=TRUE # Only enable when your SMA only support HTTP, and not HTTPS. (Defaults to HTTPS)
     - INFLUX_URL=http://192.168.0.100:8086
     - INFLUX_BUCKET=home
     - INFLUX_ORG=home

@@ -2,24 +2,33 @@ import Axios, { AxiosRequestHeaders } from 'axios';
 import { Agent } from 'https';
 import type { SMARegisters } from './SMARegisters';
 
+enum Protocol {
+  Https = 'https',
+  Http = 'http'
+}
+
 export class SMA {
   private host: string;
   private password: string;
+  private protocol: Protocol;
   private defaultHeaders: AxiosRequestHeaders;
   private agent: Agent;
   private sessionId: string;
 
-  public constructor(opts: { host: string; password: string }) {
+  public constructor(opts: { host: string; password: string; forceHttp?: boolean }) {
     this.host = opts.host;
     this.password = opts.password;
+    this.protocol = opts.forceHttp ? Protocol.Http : Protocol.Https;
     this.defaultHeaders = {
-      Origin: `https://${this.host}`
+      Origin: `${this.protocol}://${this.host}`
     };
 
     // Allow insecure SSL
-    this.agent = new Agent({
-      rejectUnauthorized: false
-    });
+    if (this.protocol == Protocol.Https) {
+      this.agent = new Agent({
+        rejectUnauthorized: false
+      });
+    }
 
     // Logoff before quitting
     this.handleExits();
@@ -27,7 +36,7 @@ export class SMA {
 
   public async login() {
     const res = await Axios.post(
-      `https://${this.host}/dyn/login.json`,
+      `${this.protocol}://${this.host}/dyn/login.json`,
       { right: 'istl', pass: this.password },
       { headers: this.defaultHeaders, httpsAgent: this.agent }
     );
@@ -57,7 +66,7 @@ export class SMA {
 
   public async getValues(): Promise<SMARegisters> {
     const res = await Axios.post(
-      `https://${this.host}/dyn/getAllOnlValues.json?sid=${this.sessionId}`,
+      `${this.protocol}://${this.host}/dyn/getAllOnlValues.json?sid=${this.sessionId}`,
       { destDev: [] },
       { headers: this.defaultHeaders, httpsAgent: this.agent }
     );

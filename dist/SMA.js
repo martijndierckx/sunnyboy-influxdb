@@ -4,20 +4,28 @@ exports.SMA = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
 const https_1 = require("https");
+var Protocol;
+(function (Protocol) {
+    Protocol["Https"] = "https";
+    Protocol["Http"] = "http";
+})(Protocol || (Protocol = {}));
 class SMA {
     constructor(opts) {
         this.host = opts.host;
         this.password = opts.password;
+        this.protocol = opts.forceHttp ? Protocol.Http : Protocol.Https;
         this.defaultHeaders = {
-            Origin: `https://${this.host}`
+            Origin: `${this.protocol}://${this.host}`
         };
-        this.agent = new https_1.Agent({
-            rejectUnauthorized: false
-        });
+        if (this.protocol == Protocol.Https) {
+            this.agent = new https_1.Agent({
+                rejectUnauthorized: false
+            });
+        }
         this.handleExits();
     }
     async login() {
-        const res = await axios_1.default.post(`https://${this.host}/dyn/login.json`, { right: 'istl', pass: this.password }, { headers: this.defaultHeaders, httpsAgent: this.agent });
+        const res = await axios_1.default.post(`${this.protocol}://${this.host}/dyn/login.json`, { right: 'istl', pass: this.password }, { headers: this.defaultHeaders, httpsAgent: this.agent });
         if (res.status == 200) {
             this.sessionId = res.data.result.sid;
             return;
@@ -32,7 +40,7 @@ class SMA {
         }
     }
     async getValues() {
-        const res = await axios_1.default.post(`https://${this.host}/dyn/getAllOnlValues.json?sid=${this.sessionId}`, { destDev: [] }, { headers: this.defaultHeaders, httpsAgent: this.agent });
+        const res = await axios_1.default.post(`${this.protocol}://${this.host}/dyn/getAllOnlValues.json?sid=${this.sessionId}`, { destDev: [] }, { headers: this.defaultHeaders, httpsAgent: this.agent });
         if (res.status == 200) {
             const mainKey = Object.keys(res.data.result)[0];
             if (mainKey !== undefined) {

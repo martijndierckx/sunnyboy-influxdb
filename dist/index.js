@@ -11,6 +11,7 @@ const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
     const WAIT_IF_NULL = process.env.WAIT_IF_NULL ? parseInt(process.env.WAIT_IF_NULL) : 60;
     const smaConnOpts = {
         host: process.env.SMA_HOST,
+        forceHttp: process.env.SMA_FORCE_HTTP ? true : false,
         password: process.env.SMA_INSTALLER_PASSWORD
     };
     const sma = new SMA_1.SMA(smaConnOpts);
