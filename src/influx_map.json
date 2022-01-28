@@ -9,6 +9,11 @@
       "watt": "DC_Watt_B",
       "volt": "DC_Volt_B",
       "amp": "DC_Amps_B"
+    },
+    "C": {
+      "watt": "DC_Watt_C",
+      "volt": "DC_Volt_C",
+      "amp": "DC_Amps_C"
     }
   },
   "AC": {

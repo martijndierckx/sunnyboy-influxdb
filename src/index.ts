@@ -1,20 +1,23 @@
 import 'source-map-support/register';
 import { Database } from './Database';
-import { SMA } from './SMA';
+import { Phases, SMA } from './SMA';
 import fs from 'fs';
 import type { SMARegisters } from './SMARegisters';
 import moment from 'moment';
 
 (async () => {
-  // Set refresh interval
+  // Set refresh interval & Wait period
   const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
   const WAIT_IF_NULL = process.env.WAIT_IF_NULL ? parseInt(process.env.WAIT_IF_NULL) : 60;
 
   // Configure connection
+  const strings = process.env.SMA_STRINGS ? parseInt(process.env.SMA_STRINGS) : 1;
   const smaConnOpts = {
     host: process.env.SMA_HOST,
     forceHttp: process.env.SMA_FORCE_HTTP ? true : false,
-    password: process.env.SMA_INSTALLER_PASSWORD
+    password: process.env.SMA_INSTALLER_PASSWORD,
+    phases: process.env.SMA_PHASES == '3' ? Phases.Three : Phases.One,
+    strings: strings >= 1 && strings <= 3 ? strings : 1,
   };
 
   // Connect to SMA
@@ -27,6 +30,18 @@ import moment from 'moment';
     process.exit(1);
   }
 
+  // Configure field map for Influx / Delete all unused field names
+  const influxFieldMap = JSON.parse(fs.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString());
+  if(smaConnOpts.phases == Phases.One) {
+    if(influxFieldMap.AC.L2) delete influxFieldMap.AC.L2;
+    if(influxFieldMap.AC.L3) delete influxFieldMap.AC.L3;
+    if(influxFieldMap.AC.L1L2) delete influxFieldMap.AC.L1L2;
+    if(influxFieldMap.AC.L2L3) delete influxFieldMap.AC.L2L3;
+    if(influxFieldMap.AC.L3L1) delete influxFieldMap.AC.L3L1;
+  }
+  if(smaConnOpts.strings <= 2 && influxFieldMap.DC.C) delete influxFieldMap.DC.C;
+  if(smaConnOpts.strings == 1 && influxFieldMap.DC.B) delete influxFieldMap.DC.B;
+
   // Connect to Influx
   const influxConnOpts = {
     url: process.env.INFLUX_URL,
@@ -34,12 +49,12 @@ import moment from 'moment';
     org: process.env.INFLUX_ORG,
     token: process.env.INFLUX_TOKEN,
     measurement: process.env.INFLUX_MEASUREMENT,
-    fieldMap: JSON.parse(fs.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString())
+    fieldMap: influxFieldMap
   };
   const db = Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
 
   // Cache latest values
-  var latestValues = {
+  var previousValues = {
     values: null,
     timestamp: null
   };
@@ -47,12 +62,11 @@ import moment from 'moment';
   // Read values every second
   setInterval(async () => {
     // Were latest values 0, wait X seconds
-    const timeSinceLastValues = moment().diff(latestValues.timestamp, 'seconds');
+    const timeSinceLastValues = moment().diff(previousValues.timestamp, 'seconds');
     if (
-      latestValues.values == null ||
-      latestValues.values.DC.A.volt != 0 ||
-      latestValues.values.DC.B.volt != 0 ||
-      (latestValues.values.DC.A.volt == 0 && latestValues.values.DC.B.volt == 0 && timeSinceLastValues >= WAIT_IF_NULL)
+      previousValues.values == null ||
+      previousValues.values.DC.A.volt != 0 ||
+      (previousValues.values.DC.A.volt == 0 && timeSinceLastValues >= WAIT_IF_NULL)
     ) {
       // Get data
       let values: SMARegisters;
@@ -61,13 +75,13 @@ import moment from 'moment';
       } catch (e) {
         console.error(`Retrieving values failed:`);
         console.error(e);
-        sma.logoff();
+        await sma.logoff();
         process.exit(1); // Force quit / restart
       }
 
       // Cache
-      latestValues.values = values;
-      latestValues.timestamp = moment();
+      previousValues.values = values;
+      previousValues.timestamp = moment();
 
       // Write values
       if (values) {
@@ -78,7 +92,7 @@ import moment from 'moment';
         } catch (e) {
           console.error(`Writing data to InfluxDB (${influxConnOpts.url}) failed:`);
           console.error(e);
-          sma.logoff();
+          await sma.logoff();
           process.exit(1); // Force quit / restart
         }
       }

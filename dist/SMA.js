@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SMA = void 0;
+exports.SMA = exports.Strings = exports.Phases = exports.Protocol = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
 const https_1 = require("https");
@@ -8,12 +8,25 @@ var Protocol;
 (function (Protocol) {
     Protocol["Https"] = "https";
     Protocol["Http"] = "http";
-})(Protocol || (Protocol = {}));
+})(Protocol = exports.Protocol || (exports.Protocol = {}));
+var Phases;
+(function (Phases) {
+    Phases[Phases["One"] = 1] = "One";
+    Phases[Phases["Three"] = 3] = "Three";
+})(Phases = exports.Phases || (exports.Phases = {}));
+var Strings;
+(function (Strings) {
+    Strings[Strings["One"] = 1] = "One";
+    Strings[Strings["Two"] = 2] = "Two";
+    Strings[Strings["Three"] = 3] = "Three";
+})(Strings = exports.Strings || (exports.Strings = {}));
 class SMA {
     constructor(opts) {
         this.host = opts.host;
         this.password = opts.password;
         this.protocol = opts.forceHttp ? Protocol.Http : Protocol.Https;
+        this.strings = opts.strings;
+        this.phases = opts.phases;
         this.defaultHeaders = {
             Origin: `${this.protocol}://${this.host}`
         };
@@ -51,17 +64,12 @@ class SMA {
                 else if (res.data.result[mainKey]['6400_00260100'] !== null) {
                     dayYield = res.data.result[mainKey]['6400_00260100'][1][0].val / 1000;
                 }
-                return {
+                const data = {
                     DC: {
                         A: {
                             watt: res.data.result[mainKey]['6380_40251E00'][1][0].val == null ? 0 : res.data.result[mainKey]['6380_40251E00'][1][0].val,
                             volt: res.data.result[mainKey]['6380_40451F00'][1][0].val == null ? 0 : res.data.result[mainKey]['6380_40451F00'][1][0].val / 100,
                             amp: res.data.result[mainKey]['6380_40452100'][1][0].val == null ? 0 : res.data.result[mainKey]['6380_40452100'][1][0].val / 1000
-                        },
-                        B: {
-                            watt: res.data.result[mainKey]['6380_40251E00'][1][1].val == null ? 0 : res.data.result[mainKey]['6380_40251E00'][1][1].val,
-                            volt: res.data.result[mainKey]['6380_40451F00'][1][1].val == null ? 0 : res.data.result[mainKey]['6380_40451F00'][1][1].val / 100,
-                            amp: res.data.result[mainKey]['6380_40452100'][1][1].val == null ? 0 : res.data.result[mainKey]['6380_40452100'][1][1].val / 1000
                         }
                     },
                     AC: {
@@ -70,23 +78,6 @@ class SMA {
                         L1: {
                             volt: res.data.result[mainKey]['6100_00464800'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464800'][1][0].val / 100,
                             amp: res.data.result[mainKey]['6100_40465300'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_40465300'][1][0].val / 1000
-                        },
-                        L2: {
-                            volt: res.data.result[mainKey]['6100_00464900'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464900'][1][0].val / 100,
-                            amp: res.data.result[mainKey]['6100_40465400'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_40465400'][1][0].val / 1000
-                        },
-                        L3: {
-                            volt: res.data.result[mainKey]['6100_00464A00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464A00'][1][0].val / 100,
-                            amp: res.data.result[mainKey]['6100_40465500'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_40465500'][1][0].val / 1000
-                        },
-                        L1L2: {
-                            volt: res.data.result[mainKey]['6100_00464B00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464B00'][1][0].val / 100
-                        },
-                        L2L3: {
-                            volt: res.data.result[mainKey]['6100_00464C00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464C00'][1][0].val / 100
-                        },
-                        L3L1: {
-                            volt: res.data.result[mainKey]['6100_00464D00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464D00'][1][0].val / 100
                         }
                     },
                     dayYield: {
@@ -96,11 +87,45 @@ class SMA {
                         kwh: res.data.result[mainKey]['6400_00260100'][1][0].val == null ? 0 : res.data.result[mainKey]['6400_00260100'][1][0].val / 1000
                     }
                 };
+                if (this.strings >= 2) {
+                    data.DC.B = {
+                        watt: res.data.result[mainKey]['6380_40251E00'][1][1].val == null ? 0 : res.data.result[mainKey]['6380_40251E00'][1][1].val,
+                        volt: res.data.result[mainKey]['6380_40451F00'][1][1].val == null ? 0 : res.data.result[mainKey]['6380_40451F00'][1][1].val / 100,
+                        amp: res.data.result[mainKey]['6380_40452100'][1][1].val == null ? 0 : res.data.result[mainKey]['6380_40452100'][1][1].val / 1000
+                    };
+                }
+                if (this.strings == 3) {
+                    data.DC.C = {
+                        watt: res.data.result[mainKey]['6380_40251E00'][1][2].val == null ? 0 : res.data.result[mainKey]['6380_40251E00'][1][1].val,
+                        volt: res.data.result[mainKey]['6380_40451F00'][1][2].val == null ? 0 : res.data.result[mainKey]['6380_40451F00'][1][1].val / 100,
+                        amp: res.data.result[mainKey]['6380_40452100'][1][2].val == null ? 0 : res.data.result[mainKey]['6380_40452100'][1][1].val / 1000
+                    };
+                }
+                if (this.phases == Phases.Three) {
+                    data.AC.L2 = {
+                        volt: res.data.result[mainKey]['6100_00464900'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464900'][1][0].val / 100,
+                        amp: res.data.result[mainKey]['6100_40465400'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_40465400'][1][0].val / 1000
+                    };
+                    data.AC.L3 = {
+                        volt: res.data.result[mainKey]['6100_00464A00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464A00'][1][0].val / 100,
+                        amp: res.data.result[mainKey]['6100_40465500'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_40465500'][1][0].val / 1000
+                    };
+                    data.AC.L1L2 = {
+                        volt: res.data.result[mainKey]['6100_00464B00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464B00'][1][0].val / 100
+                    };
+                    data.AC.L2L3 = {
+                        volt: res.data.result[mainKey]['6100_00464C00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464C00'][1][0].val / 100
+                    };
+                    data.AC.L3L1 = {
+                        volt: res.data.result[mainKey]['6100_00464D00'][1][0].val == null ? 0 : res.data.result[mainKey]['6100_00464D00'][1][0].val / 100
+                    };
+                }
+                return data;
             }
         }
-        console.error('Error when parsing SMA SID response:');
+        console.error('Error when parsing SMA data:');
         console.log(res.data);
-        throw Error('Error when parsing SMA SID response:');
+        throw Error('Error when parsing SMA data');
     }
     handleExits() {
         const exitHandler = async () => {

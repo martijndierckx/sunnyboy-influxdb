@@ -6,6 +6,8 @@ services:
     environment:
     - SMA_HOST=192.168.0.99
     - SMA_INSTALLER_PASSWORD=
+    - SMA_PHASES=1 # 1 or 3
+    - SMA_STRINGS=1 # 1, 2 or 3
     #- SMA_FORCE_HTTP=TRUE # Only enable when your SMA only support HTTP, and not HTTPS. (Defaults to HTTPS)
     - INFLUX_URL=http://192.168.0.100:8086
     - INFLUX_BUCKET=home
@@ -14,7 +16,7 @@ services:
     - INFLUX_MEASUREMENT=solar
     - INFLUX_INVERTERTAG=main
     #- INFLUX_MAP_FILE=/sunnyboy/influx_map.json # If you want to overwrite it, you can provide your own by setting a location via a volume
-    - INTERVAL=1000
+    - INTERVAL=1000 # Get/Write values every X ms
     - WAIT_IF_NULL=60 # Wait 60 seconds if the last values were 0
   #volumes:
   #  - /home/home/sunnyboy/influx_map.json:/sunnyboy/influx_map.json

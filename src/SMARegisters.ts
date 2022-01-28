@@ -5,7 +5,12 @@ export type SMARegisters = {
       volt: number;
       amp: number;
     };
-    B: {
+    B?: {
+      watt: number;
+      volt: number;
+      amp: number;
+    };
+    C?: {
       watt: number;
       volt: number;
       amp: number;
@@ -18,21 +23,21 @@ export type SMARegisters = {
       volt: number;
       amp: number;
     };
-    L2: {
+    L2?: {
       volt: number;
       amp: number;
     };
-    L3: {
+    L3?: {
       volt: number;
       amp: number;
     };
-    L1L2: {
+    L1L2?: {
       volt: number;
     };
-    L2L3: {
+    L2L3?: {
       volt: number;
     };
-    L3L1: {
+    L3L1?: {
       volt: number;
     };
   };
