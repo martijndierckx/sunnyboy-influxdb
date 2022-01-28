@@ -51,7 +51,7 @@ import moment from 'moment';
     measurement: process.env.INFLUX_MEASUREMENT,
     fieldMap: influxFieldMap
   };
-  const db = Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
+  const db = Database.connect(influxConnOpts, process.env.INFLUX_INVERTERTAG);
 
   // Cache latest values
   var previousValues = {

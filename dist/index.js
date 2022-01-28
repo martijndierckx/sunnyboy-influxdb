@@ -51,7 +51,7 @@ const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
         measurement: process.env.INFLUX_MEASUREMENT,
         fieldMap: influxFieldMap
     };
-    const db = Database_1.Database.connect(influxConnOpts, process.env.INFLUX_METERTAG);
+    const db = Database_1.Database.connect(influxConnOpts, process.env.INFLUX_INVERTERTAG);
     var previousValues = {
         values: null,
         timestamp: null
