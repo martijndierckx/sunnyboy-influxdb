@@ -61,7 +61,7 @@ import moment from 'moment';
 
   // Read values every second
   setInterval(async () => {
-    // Were latest values 0, wait X seconds
+    // If values were 0, then wait X seconds before retrieving/writing values again
     const timeSinceLastValues = moment().diff(previousValues.timestamp, 'seconds');
     if (
       previousValues.values == null ||
@@ -96,7 +96,7 @@ import moment from 'moment';
         }
       }
     } else {
-      console.log(`Waiting ${WAIT_IF_NULL} seconds because previous values where 0`);
+      console.log(`Waiting ${WAIT_IF_NULL} seconds because previous values were 0`);
     }
   }, INTERVAL);
 })();

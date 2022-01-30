@@ -87,7 +87,7 @@ const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
             }
         }
         else {
-            console.log(`Waiting ${WAIT_IF_NULL} seconds because previous values where 0`);
+            console.log(`Waiting ${WAIT_IF_NULL} seconds because previous values were 0`);
         }
     }, INTERVAL);
 })();
