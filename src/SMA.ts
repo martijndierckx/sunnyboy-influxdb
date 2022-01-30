@@ -64,7 +64,7 @@ export class SMA {
       { headers: this.defaultHeaders, httpsAgent: this.agent }
     );
 
-    if (res.status == 200) {
+    if (res.status == 200 && res.data.result && res.data.result.sid) {
       // Save Session ID
       this.sessionId = res.data.result.sid;
 
@@ -74,6 +74,8 @@ export class SMA {
     // Something went wrong
     console.error('Error when parsing SMA SID response:');
     console.log(res.data);
+
+    throw Error('Login failed. Max number of sessions reached? If so, just wait a couple of minutes and try again ...');
   }
 
   public async logoff() {

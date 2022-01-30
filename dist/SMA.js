@@ -39,12 +39,13 @@ class SMA {
     }
     async login() {
         const res = await axios_1.default.post(`${this.protocol}://${this.host}/dyn/login.json`, { right: 'istl', pass: this.password }, { headers: this.defaultHeaders, httpsAgent: this.agent });
-        if (res.status == 200) {
+        if (res.status == 200 && res.data.result && res.data.result.sid) {
             this.sessionId = res.data.result.sid;
             return;
         }
         console.error('Error when parsing SMA SID response:');
         console.log(res.data);
+        throw Error('Login failed. Max number of sessions reached? If so, just wait a couple of minutes and try again ...');
     }
     async logoff() {
         try {
