@@ -60,7 +60,7 @@ class SMA {
     }
     async getValues() {
         const res = await axios_1.default.post(`${this.protocol}://${this.host}/dyn/getAllOnlValues.json?sid=${this.sessionId}`, { destDev: [] }, { headers: this.defaultHeaders, httpsAgent: this.agent });
-        if (res.status == 200 && res.data && res.data.result && Array.isArray(res.data.result)) {
+        if (res.status == 200 && res.data && res.data.result) {
             const mainKey = Object.keys(res.data.result)[0];
             if (mainKey !== undefined) {
                 let dayYield = 0;

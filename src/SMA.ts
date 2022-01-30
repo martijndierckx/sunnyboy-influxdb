@@ -99,7 +99,7 @@ export class SMA {
       { headers: this.defaultHeaders, httpsAgent: this.agent }
     );
 
-    if (res.status == 200 && res.data && res.data.result && Array.isArray(res.data.result)) {
+    if (res.status == 200 && res.data && res.data.result) {
       // Get Main Key
       const mainKey = Object.keys(res.data.result)[0];
 
