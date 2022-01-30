@@ -49,7 +49,7 @@ class SMA {
     }
     async logoff() {
         try {
-            const res = await axios_1.default.post(`https://${this.host}/dyn/logout.json?sid=${this.sessionId}`, {}, { headers: this.defaultHeaders, httpsAgent: this.agent });
+            const res = await axios_1.default.post(`${this.protocol}://${this.host}/dyn/logout.json?sid=${this.sessionId}`, {}, { headers: this.defaultHeaders, httpsAgent: this.agent });
             if (res.status == 200) {
                 console.log('Logged out from SMA');
             }

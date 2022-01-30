@@ -81,7 +81,7 @@ export class SMA {
   public async logoff() {
     try {
       const res = await Axios.post(
-        `https://${this.host}/dyn/logout.json?sid=${this.sessionId}`,
+        `${this.protocol}://${this.host}/dyn/logout.json?sid=${this.sessionId}`,
         {},
         { headers: this.defaultHeaders, httpsAgent: this.agent }
       );
