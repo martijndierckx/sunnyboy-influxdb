@@ -15,7 +15,7 @@ const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
         forceHttp: process.env.SMA_FORCE_HTTP ? true : false,
         password: process.env.SMA_INSTALLER_PASSWORD,
         phases: process.env.SMA_PHASES == '3' ? SMA_1.Phases.Three : SMA_1.Phases.One,
-        strings: strings >= 1 && strings <= 3 ? strings : 1,
+        strings: strings >= 1 && strings <= 3 ? strings : 1
     };
     const sma = new SMA_1.SMA(smaConnOpts);
     try {

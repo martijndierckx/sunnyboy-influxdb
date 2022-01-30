@@ -77,13 +77,18 @@ export class SMA {
   }
 
   public async logoff() {
-    const res = await Axios.post(
-      `https://${this.host}/dyn/logout.json?sid=${this.sessionId}`,
-      {},
-      { headers: this.defaultHeaders, httpsAgent: this.agent }
-    );
-    if (res.status == 200) {
-      console.log('Logged out from SMA');
+    try {
+      const res = await Axios.post(
+        `https://${this.host}/dyn/logout.json?sid=${this.sessionId}`,
+        {},
+        { headers: this.defaultHeaders, httpsAgent: this.agent }
+      );
+      if (res.status == 200) {
+        console.log('Logged out from SMA');
+      }
+    } catch (e) {
+      console.error('Logging out failed');
+      console.error(e);
     }
   }
 
@@ -94,7 +99,7 @@ export class SMA {
       { headers: this.defaultHeaders, httpsAgent: this.agent }
     );
 
-    if (res.status == 200) {
+    if (res.status == 200 && res.data && res.data.result && Array.isArray(res.data.result)) {
       // Get Main Key
       const mainKey = Object.keys(res.data.result)[0];
 
@@ -186,11 +191,7 @@ export class SMA {
 
   private handleExits(): void {
     const exitHandler = async () => {
-      try {
-        await this.logoff();
-      } catch (e) {
-        console.log('Logoff failed');
-      }
+      await this.logoff();
     };
 
     // Do something when app is closing

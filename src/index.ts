@@ -17,7 +17,7 @@ import moment from 'moment';
     forceHttp: process.env.SMA_FORCE_HTTP ? true : false,
     password: process.env.SMA_INSTALLER_PASSWORD,
     phases: process.env.SMA_PHASES == '3' ? Phases.Three : Phases.One,
-    strings: strings >= 1 && strings <= 3 ? strings : 1,
+    strings: strings >= 1 && strings <= 3 ? strings : 1
   };
 
   // Connect to SMA
@@ -32,15 +32,15 @@ import moment from 'moment';
 
   // Configure field map for Influx / Delete all unused field names
   const influxFieldMap = JSON.parse(fs.readFileSync(process.env.INFLUX_MAP_FILE ?? './src/influx_map.json').toString());
-  if(smaConnOpts.phases == Phases.One) {
-    if(influxFieldMap.AC.L2) delete influxFieldMap.AC.L2;
-    if(influxFieldMap.AC.L3) delete influxFieldMap.AC.L3;
-    if(influxFieldMap.AC.L1L2) delete influxFieldMap.AC.L1L2;
-    if(influxFieldMap.AC.L2L3) delete influxFieldMap.AC.L2L3;
-    if(influxFieldMap.AC.L3L1) delete influxFieldMap.AC.L3L1;
+  if (smaConnOpts.phases == Phases.One) {
+    if (influxFieldMap.AC.L2) delete influxFieldMap.AC.L2;
+    if (influxFieldMap.AC.L3) delete influxFieldMap.AC.L3;
+    if (influxFieldMap.AC.L1L2) delete influxFieldMap.AC.L1L2;
+    if (influxFieldMap.AC.L2L3) delete influxFieldMap.AC.L2L3;
+    if (influxFieldMap.AC.L3L1) delete influxFieldMap.AC.L3L1;
   }
-  if(smaConnOpts.strings <= 2 && influxFieldMap.DC.C) delete influxFieldMap.DC.C;
-  if(smaConnOpts.strings == 1 && influxFieldMap.DC.B) delete influxFieldMap.DC.B;
+  if (smaConnOpts.strings <= 2 && influxFieldMap.DC.C) delete influxFieldMap.DC.C;
+  if (smaConnOpts.strings == 1 && influxFieldMap.DC.B) delete influxFieldMap.DC.B;
 
   // Connect to Influx
   const influxConnOpts = {
@@ -87,7 +87,6 @@ import moment from 'moment';
       if (values) {
         try {
           await db.write(values);
-
           console.log(`Data written to InfluxDB`);
         } catch (e) {
           console.error(`Writing data to InfluxDB (${influxConnOpts.url}) failed:`);

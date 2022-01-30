@@ -47,14 +47,20 @@ class SMA {
         console.log(res.data);
     }
     async logoff() {
-        const res = await axios_1.default.post(`https://${this.host}/dyn/logout.json?sid=${this.sessionId}`, {}, { headers: this.defaultHeaders, httpsAgent: this.agent });
-        if (res.status == 200) {
-            console.log('Logged out from SMA');
+        try {
+            const res = await axios_1.default.post(`https://${this.host}/dyn/logout.json?sid=${this.sessionId}`, {}, { headers: this.defaultHeaders, httpsAgent: this.agent });
+            if (res.status == 200) {
+                console.log('Logged out from SMA');
+            }
+        }
+        catch (e) {
+            console.error('Logging out failed');
+            console.error(e);
         }
     }
     async getValues() {
         const res = await axios_1.default.post(`${this.protocol}://${this.host}/dyn/getAllOnlValues.json?sid=${this.sessionId}`, { destDev: [] }, { headers: this.defaultHeaders, httpsAgent: this.agent });
-        if (res.status == 200) {
+        if (res.status == 200 && res.data && res.data.result && Array.isArray(res.data.result)) {
             const mainKey = Object.keys(res.data.result)[0];
             if (mainKey !== undefined) {
                 let dayYield = 0;
@@ -129,12 +135,7 @@ class SMA {
     }
     handleExits() {
         const exitHandler = async () => {
-            try {
-                await this.logoff();
-            }
-            catch (e) {
-                console.log('Logoff failed');
-            }
+            await this.logoff();
         };
         process.on('exit', exitHandler);
         process.on('SIGINT', exitHandler);
