@@ -4,6 +4,7 @@ import { Phases, SMA } from './SMA';
 import fs from 'fs';
 import type { SMARegisters } from './SMARegisters';
 import moment from 'moment';
+import Express from 'express';
 
 (async () => {
   // Set refresh interval & Wait period
@@ -58,6 +59,20 @@ import moment from 'moment';
     values: null,
     timestamp: null
   };
+
+  // Configure webserver
+  if (process.env.HTTP_PORT) {
+    const HTTP_PORT = parseInt(process.env.HTTP_PORT);
+    const express = Express();
+
+    express.get('/data', (_req, res) => {
+      res.send(previousValues);
+    });
+
+    express.listen(HTTP_PORT, () => {
+      console.log(`HTTP listening on port ${HTTP_PORT}`);
+    });
+  }
 
   // Read values every second
   setInterval(async () => {

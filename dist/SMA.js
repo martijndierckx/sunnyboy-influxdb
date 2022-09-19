@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SMA = exports.Strings = exports.Phases = exports.Protocol = void 0;
 const tslib_1 = require("tslib");
-const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
+const axios_1 = tslib_1.__importDefault(require("axios"));
 const https_1 = require("https");
 var Protocol;
 (function (Protocol) {

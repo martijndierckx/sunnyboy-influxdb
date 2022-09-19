@@ -4,8 +4,9 @@ const tslib_1 = require("tslib");
 require("source-map-support/register");
 const Database_1 = require("./Database");
 const SMA_1 = require("./SMA");
-const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
-const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const moment_1 = tslib_1.__importDefault(require("moment"));
+const express_1 = tslib_1.__importDefault(require("express"));
 (async () => {
     const INTERVAL = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : 1000;
     const WAIT_IF_NULL = process.env.WAIT_IF_NULL ? parseInt(process.env.WAIT_IF_NULL) : 60;
@@ -56,6 +57,16 @@ const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
         values: null,
         timestamp: null
     };
+    if (process.env.HTTP_PORT) {
+        const HTTP_PORT = parseInt(process.env.HTTP_PORT);
+        const express = (0, express_1.default)();
+        express.get('/data', (_req, res) => {
+            res.send(previousValues);
+        });
+        express.listen(HTTP_PORT, () => {
+            console.log(`HTTP listening on port ${HTTP_PORT}`);
+        });
+    }
     setInterval(async () => {
         const timeSinceLastValues = (0, moment_1.default)().diff(previousValues.timestamp, 'seconds');
         if (previousValues.values == null ||

@@ -18,6 +18,7 @@ services:
     #- INFLUX_MAP_FILE=/sunnyboy/influx_map.json # If you want to overwrite it, you can provide your own by setting a location via a volume
     - INTERVAL=1000 # Get/Write values every X ms
     - WAIT_IF_NULL=60 # Wait 60 seconds if the last values were 0
+    #- HTTP_PORT=80 # if you want to expose the read values via HTTP as well, you can enter a port number
   #volumes:
   #  - /home/home/sunnyboy/influx_map.json:/sunnyboy/influx_map.json
     logging:
